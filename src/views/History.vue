@@ -1,13 +1,5 @@
 <template>
   <div class="home">
-    <div class=" navbar columns is-gapless">
-      <div class="column panels">
-        <i class="fas fa-bars"></i>
-      </div>
-      <div class="column lists">
-        History
-      </div>
-    </div>
     <div class="columns is-gapless">
       <div class="column menu-panel">
         <router-link to="/"><div class="all-menu"></div></router-link>
@@ -193,8 +185,9 @@ export default {
       receipt.classList.toggle('is-active');
     },
     isCheck() {
-      const check = document.querySelector('.card-overlay');
-      check.classList.toggle('show');
+      // const check = document.querySelector('.card-overlay');
+      // check.classList.toggle('show');
+      console.log('hello');
     },
   },
 };
