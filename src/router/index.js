@@ -2,6 +2,8 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import History from '../views/History.vue';
+import Login from '../views/Login.vue';
+import Register from '../views/Register.vue';
 
 Vue.use(VueRouter);
 
@@ -15,6 +17,16 @@ const routes = [
     path: '/history',
     name: 'History',
     component: History,
+  },
+  {
+    path: '/auth/login',
+    name: 'Login',
+    component: Login,
+  },
+  {
+    path: '/auth/register',
+    name: 'Register',
+    component: Register,
   },
 ];
 
