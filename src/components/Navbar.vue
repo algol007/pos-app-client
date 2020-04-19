@@ -118,4 +118,14 @@ export default {
     border-radius: 50%;
     padding: 5px 10px;
   }
+  @media screen and (max-width: 768px){
+    .navbar{
+      flex-wrap: nowrap;
+      flex-direction: row;
+      display: flex;
+    }
+    .order{
+      display: none;
+    }
+  }
 </style>

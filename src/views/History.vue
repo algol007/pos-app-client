@@ -9,30 +9,36 @@
             <div class="card card-history bg-pink">
               <div class="card-content">
                 <div class="content">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec
-                  <a href="#">@bulmaio</a>. <a href="#">#css</a> <a href="#">#responsive</a>
-                  <br>
-                  <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+                  <div class="today-title">
+                    Today's Income
+                  </div>
+                  <div class="today-income">
+                    Rp. {{ incomes }}
+                  </div>
                 </div>
               </div>
             </div>
             <div class="card card-history bg-blue">
               <div class="card-content">
                 <div class="content">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec
-                  <a href="#">@bulmaio</a>. <a href="#">#css</a> <a href="#">#responsive</a>
-                  <br>
-                  <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+                  <div class="today-title">
+                    Orders
+                  </div>
+                  <div class="today-income">
+                    {{ totalOrders }}
+                  </div>
                 </div>
               </div>
             </div>
             <div class="card card-history bg-purple">
               <div class="card-content">
                 <div class="content">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec
-                  <a href="#">@bulmaio</a>. <a href="#">#css</a> <a href="#">#responsive</a>
-                  <br>
-                  <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+                  <div class="today-title">
+                    This Year's Income
+                  </div>
+                  <div class="today-income">
+                    Rp. {{ incomes }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -44,10 +50,7 @@
                   Revenue
                 </div>
                 <div class="content">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec
-                  <a href="#">@bulmaio</a>. <a href="#">#css</a> <a href="#">#responsive</a>
-                  <br>
-                  <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+                  <area-chart :data="chartData"></area-chart>
                 </div>
               </div>
             </div>
@@ -58,31 +61,22 @@
                 <div class="card-title">
                   Recent Order
                 </div>
-                <div class="content">
+                <div class="content table-container">
                   <table class="table">
                     <thead>
                       <tr>
                         <th>INVOICES</th>
                         <th>CASHIER</th>
                         <th>DATE</th>
-                        <th>ORDERS</th>
                         <th>AMOUNT</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>38</td>
-                        <td>23</td>
-                        <td>12</td>
-                        <td>3</td>
-                        <td>68</td>
-                      </tr>
-                      <tr>
-                        <td>38</td>
-                        <td>23</td>
-                        <td>12</td>
-                        <td>3</td>
-                        <td>68</td>
+                      <tr v-for="order in orders" :key="order.id">
+                        <td>{{ order.invoice }}</td>
+                        <td>{{ order.userOrder.name }}</td>
+                        <td>{{ order.createdAt.slice(0, 10) }}</td>
+                        <td>Rp. {{ order.total }}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -91,76 +85,6 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Modal Add Item -->
-    <div class="modal modal-item">
-      <div class="modal-background"></div>
-      <div class="modal-card">
-        <section class="modal-card-body">
-          <div class="modal-item-header">
-            Add Item
-          </div>
-          <div class="field is-horizontal">
-            <div class="field-label is-normal">
-              <label class="label">Name</label>
-            </div>
-            <div class="field-body">
-              <div class="field">
-                <div class="control">
-                  <input class="input" type="text" placeholder="Product Name">
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="field is-horizontal">
-            <div class="field-label is-normal">
-              <label class="label">Image</label>
-            </div>
-            <div class="field-body">
-              <div class="field">
-                <div class="control">
-                  <input class="input" type="file">
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="field is-horizontal">
-            <div class="field-label is-normal">
-              <label class="label">Price</label>
-            </div>
-            <div class="field-body">
-              <div class="field">
-                <div class="control">
-                  <input class="input" type="text" placeholder="Product Price">
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="field is-horizontal">
-            <div class="field-label is-normal">
-              <label class="label">Category</label>
-            </div>
-            <div class="field-body">
-              <div class="field is-narrow">
-                <div class="control">
-                  <div class="select is-fullwidth">
-                    <select>
-                      <option>Food</option>
-                      <option>Drink</option>
-                      <option>Desert</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-item-button">
-            <button class="button checkout2 button-item" @click="addItem">Cancel</button>
-            <button class="button checkout1 button-item">Add</button>
-          </div>
-        </section>
       </div>
     </div>
   </div>
@@ -176,6 +100,22 @@ export default {
     Sidebar,
     Navbar2,
   },
+  data() {
+    return {
+      chartData: {
+        '2020-04-12': 2,
+        '2020-04-13': 5,
+        '2020-04-14': 3,
+        '2020-04-15': 9,
+        '2020-04-16': 9,
+        '2020-04-17': 8,
+        '2020-04-18': 7,
+      },
+      incomes: null,
+      totalOrders: null,
+      revenue: null,
+    };
+  },
   methods: {
     receipt() {
       const receipt = document.querySelector('.modal-receipt');
@@ -185,10 +125,35 @@ export default {
       const receipt = document.querySelector('.modal-item');
       receipt.classList.toggle('is-active');
     },
-    isCheck() {
-      // const check = document.querySelector('.card-overlay');
-      // check.classList.toggle('show');
-      console.log('hello');
+    totalOrder() {
+      this.totalOrders = this.orders.length;
+    },
+    income() {
+      const income = [];
+      for (let i = 0; i < this.orders.length; i += 1) {
+        income.push(this.orders[i].total);
+      }
+      this.incomes = income.reduce((a, b) => a + b);
+    },
+    revenues() {
+      const revenue = [];
+      for (let i = 0; i < this.orders.length; i += 1) {
+        revenue.push(this.orders[0].total);
+      }
+      this.revenue = revenue;
+    },
+  },
+  updated() {
+    this.totalOrder();
+    this.income();
+    this.revenues();
+  },
+  mounted() {
+    this.$store.dispatch('getAllOrders');
+  },
+  computed: {
+    orders() {
+      return this.$store.state.orders;
     },
   },
 };
@@ -202,80 +167,8 @@ export default {
   .columns.is-gapless:not(:last-child) {
     margin-bottom: 0;
   }
-  .navbar{
-    width: 100%;
-    height: 60px;
-    position: fixed;
-    top: 0;
-    align-items: center;
-    box-shadow: 4px 1px 5px rgba($color: #000000, $alpha: 0.2);
-    margin: 0 !important;
-  }
-  .panels{
-    max-width: 60px;
-    font-size: 1.5em;
-    text-align: center;
-  }
-  .lists, .order{
-    text-align: center;
-    font-size: 1.2em;
-  }
-  .order{
-    border-left: 1px solid #696969;
-  }
-  .menu-lists{
-    margin-left: 60px !important;
-    background: rgba(190, 195, 202, 0.3);
-  }
-  .menu-panel{
-    width: 60px;
-    height: 100vh;
-    position: fixed;
-    box-shadow: 0px 4px 10px rgba($color: #000000, $alpha: 0.25);
-  }
-  .menu-order{
-    display: flex;
-  }
-  .menu-panel, .menu-order, .menu-lists{
-    margin-top: 60px !important;
-  }
-  .all-menu{
-    background-image: url('../../public/img/fork.png');
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
-    width: 35px;
-    height: 35px;
-    margin: 30px auto;
-  }
-  .income-history{
-    background-image: url('../../public/img/clipboard.png');
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
-    width: 40px;
-    height: 40px;
-    margin: 30px auto;
-  }
-  .add-menu{
-    text-align: center;
-    font-size: 30px;
-    margin: 30px auto;
-  }
-  .card-overlay{
-    width: 100%;
-    height: 100%;
-    background: rgba($color: #000000, $alpha: 0.5);
-    position: absolute;
-    z-index: 2;
-    color: #ffffff;
-    font-size: 4em;
-    text-align: center;
-    padding: 30px 0;
-    display: none;
-  }
   .display-menu{
-    padding: 1em;
+    padding: 76px 16px 16px 76px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -299,10 +192,23 @@ export default {
   }
   .card-info{
     display: flex;
+    justify-content: center;
+    width: 100%;
   }
   .card-history{
     margin: 0 10px;
     border-radius: 6px;
+    width: 33%;
+    height: 180px;
+  }
+  .card-info .card-content{
+    color: #363636;
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+  .card-info .card-content .today-income{
+    font-size: 1.5em;
   }
   .card-chart, .card-recent-order{
     width: 100%;
@@ -327,5 +233,15 @@ export default {
   }
   .bg-pink{
     background-image: linear-gradient(285.38deg, #FBB2B4 30.05%, rgba(255, 143, 178, 0) 133.19%);
+  }
+  @media screen and (max-width: 768px){
+    .card-info{
+      flex-direction: column;
+      margin: 0 auto;
+    }
+    .card-history{
+      margin-top: 10px;
+      width: 95%;
+    }
   }
 </style>

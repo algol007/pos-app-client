@@ -1,5 +1,5 @@
 <template>
-  <div class=" navbar columns is-gapless">
+  <div class="navbar columns is-gapless">
     <div class="column panels">
       <i class="fas fa-bars"></i>
     </div>
@@ -25,9 +25,11 @@ export default {
     height: 60px;
     position: fixed;
     top: 0;
+    display: flex;
     align-items: center;
     box-shadow: 4px 1px 5px rgba($color: #000000, $alpha: 0.2);
     margin: 0 !important;
+    flex-wrap: nowrap;
   }
   .panels{
     max-width: 60px;

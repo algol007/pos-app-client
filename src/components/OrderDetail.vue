@@ -10,21 +10,21 @@
     </div>
     <div class="ordered" v-else>
       <div class="is-order">
-        <div class="column card-order" v-for="order in orderItem" :key="order.id">
+        <div class="column card-order" v-for="order in orderItem" :key="order.data.id">
           <div class="image-order">
-            <img :src="order.image" :alt="order.image">
+            <img :src="order.data.image" :alt="order.data.image">
           </div>
           <div class="desc-order">
             <div class="name-order">
-              <b>{{ order.name }}</b>
+              <b>{{ order.data.name }}</b>
             </div>
             <div class="qty-order">
               <ul>
-                <li @click="reduceQty(order.id)">-</li>
-                <li>{{ qty }}</li>
-                <li @click="addQty(order.id)">+</li>
+                <li @click="reduceQty(order)">-</li>
+                <li>{{ order.qty }}</li>
+                <li @click="addQty(order)">+</li>
               </ul>
-              <p>Rp. {{ qty * order.price }}</p>
+              <p>Rp. {{ order.qty * order.data.price }}</p>
             </div>
           </div>
         </div>
@@ -37,7 +37,7 @@
             <p>*Belum termasuk PPN</p>
           </div>
           <button class="button is-fullwidth button-checkout bg-blue"
-          @click="$emit('receipt')">
+          @click="receipt">
             Checkout</button>
           <button class="button is-fullwidth button-checkout bg-pink"
           @click="$emit('cancelOrder')">
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+// import axios from 'axios';
 // import OrderItem from './OrderItem.vue';
 
 export default {
@@ -59,36 +60,71 @@ export default {
       count: 0,
       orders: [],
       total: 0,
+      items: null,
     };
   },
+  created() {
+    this.items = JSON.parse(localStorage.getItem('items'));
+    // console.log(this.items);
+  },
   methods: {
-    addQty(id) {
-      this.qty += 1;
-      // console.log(id);
-      this.$store.dispacth('addQty', id, this.qty);
+    addQty(data) { // eslint-disable-line
+      this.$store.dispatch('addQty', data);
+      // console.log([data]);
     },
-    reduceQty() {
-      if (this.qty === 1) {
-        this.qty = 1;
-      } else {
-        this.qty -= 1;
-      }
+    reduceQty(data) {
+      this.$store.dispatch('reduceQty', data);
     },
     totalPrice() {
       this.orders = this.orderItem;
-      // console.log(this.orders);
-      const total = [];
-      for (let i = 0; i < this.orders.length; i += 1) {
-        total.push(this.orders[i].price);
+      if (this.orders.length !== 0) {
+        const total = [];
+        for (let i = 0; i < this.orders.length; i += 1) {
+          total.push(this.orders[i].data.price * this.orders[i].qty);
+        }
+        this.total = total.reduce((a, b) => a + b);
       }
-      // console.log(total);
-      this.total = total.reduce((a, b) => a + b);
+    },
+    receipt() {
+      // const order = 'order';
+      // const date = new Date();
+      // axios
+      //   .post(this.$store.state.url + order, {
+      //     userId: this.qty,
+      //     total: this.total,
+      //     invoice: '#POS' + date.getTime(), // eslint-disable-line
+      //   },
+      //   { headers: { 'baca-bismillah': this.items.token } })
+      //   .then((res) => {
+      //     console.log(res);
+      //   }).catch((err) => {
+      //     console.log(err);
+      //   });
+      // for (let i = 0; i < this.orderItem.length; i += 1) {
+      //   setTimeout((detail = 'orderDetail') => {
+      //     axios
+      //       .post(this.$store.state.url + detail, {
+      //         productId: this.orders[i].data.id,
+      //         qty: this.orders[i].qty,
+      //         price: this.orders[i].data.price,
+      //       },
+      //       { headers: { 'baca-bismillah': this.items.token } })
+      //       .then((res) => {
+      //         console.log(res);
+      //       });
+      //   }, 1000);
+      // }
+      const receipt = document.querySelector('.modal-receipt');
+      receipt.classList.toggle('is-active');
     },
   },
   updated() {
     this.totalPrice();
   },
   computed: {
+    grandTotal() {
+      return this.totalPrice();
+    },
     orderItem() {
       return this.$store.state.selected;
     },
@@ -197,5 +233,11 @@ export default {
     font-weight: bold;
     cursor: pointer;
   }
-
+  @media screen and (max-width: 768px){
+    .ordered{
+      padding: 20px 20px 20px 80px;
+      max-height: 530px;
+      overflow-y: scroll;
+    }
+  }
 </style>

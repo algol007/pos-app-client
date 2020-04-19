@@ -9,47 +9,45 @@ axios.defaults.headers.common.authorization = 'baca-bismillah';
 export default new Vuex.Store({
   state: {
     url: process.env.VUE_APP_BASE_URL,
-    page: 'product',
     products: null,
     selected: [],
+    orders: null,
   },
   mutations: {
     product(state, data) {
       state.products = data;
     },
+    order(state, data) {
+      state.orders = data;
+    },
     cancel(state) {
       state.selected = [];
     },
     add(state, data) {
-      const items = state.selected.find((item) => item.id === data.id);
+      const items = state.selected.find((item) => item.data.id === data.data.id);
       if (!items) {
         state.selected.push(data);
       }
     },
-    addQty(state, id, qty) {
-      const items = state.selected.find((item) => item.id === id);
+    addQty(state, data) { // eslint-disable-line 
+      const items = state.selected.find((item) => item.data.id === data.data.id);
       if (items) {
-        items.price *= qty;
+        items.qty += 1;
       }
     },
-  },
-  getters: {
-    addQty(state, id, qty) {
-      const items = state.selected.find((item) => item.id === id);
-      console.log(items);
+    reduceQty(state, data) { // eslint-disable-line 
+      const items = state.selected.find((item) => item.data.id === data.data.id);
       if (items) {
-        items.price *= qty;
+        items.qty -= 1;
       }
     },
   },
   actions: {
-    addQty(context, id, qty) {
-      // const items = context.state.selected.find((item) => item.id === id);
-      // if(items) {
-      context.commit('addQty', id, qty);
-      // } else{
-      //   console.log('gagal');
-      // }
+    addQty(context, data) {
+      context.commit('addQty', data);
+    },
+    reduceQty(context, data) {
+      context.commit('reduceQty', data);
     },
     addOrder(context, data) {
       context.commit('add', data);
@@ -59,7 +57,7 @@ export default new Vuex.Store({
     },
     getAllItems(context) {
       axios
-        .get(context.state.url + context.state.page)
+        .get(context.state.url + 'product') // eslint-disable-line
         .then((res) => {
           context.commit('product', res.data.products.rows);
         })
@@ -68,11 +66,20 @@ export default new Vuex.Store({
         });
     },
     searchItem(context, data) {
-      const search = `product?search=${data}`;
       axios
-        .get(context.state.url + search)
+        .get(context.state.url + `product?search=${data}`) // eslint-disable-line
         .then((res) => {
           context.commit('product', res.data.products.rows);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getAllOrders(context) {
+      axios
+        .get(context.state.url + 'order') //eslint-disable-line
+        .then((res) => {
+          context.commit('order', res.data.orders.rows);
         })
         .catch((error) => {
           console.log(error);

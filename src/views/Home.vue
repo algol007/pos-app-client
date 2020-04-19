@@ -8,7 +8,7 @@
           <CardItem @select="select" />
         </div>
       </div>
-      <OrderDetail @receipt="receipt" @cancelOrder="cancelOrder" />
+      <OrderDetail @cancelOrder="cancelOrder" />
     </div>
     <AddItem />
     <Receipt />
@@ -17,7 +17,6 @@
 
 <script>
 // import { mapState } from 'vuex';
-// import axios from 'axios';
 import Navbar from '../components/Navbar.vue';
 import Sidebar from '../components/Sidebar.vue';
 import CardItem from '../components/CardItem.vue';
@@ -45,6 +44,9 @@ export default {
       // selected: null,
     };
   },
+  created() {
+
+  },
   methods: {
     reduceQty() {
       this.qty -= 1;
@@ -52,16 +54,12 @@ export default {
     addQty() {
       this.qty += 1;
     },
-    receipt() {
-      const receipt = document.querySelector('.modal-receipt');
-      receipt.classList.toggle('is-active');
-    },
     addItem() {
       const receipt = document.querySelector('.modal-item');
       receipt.classList.toggle('is-active');
     },
-    select(id) {
-      this.$store.dispatch('addOrder', id, { qty: 1 });
+    select(data) {
+      return this.$store.dispatch('addOrder', { data, qty: 1 });
     },
     cancelOrder() {
       this.$store.dispatch('cancelOrder');
@@ -86,5 +84,14 @@ export default {
     padding: 1em;
     padding-top: 76px;
     min-height: 100vh;
+  }
+  @media screen and (max-width: 768px){
+    .modal-item{
+      padding: 0 20px;
+    }
+    .display-menu{
+      height: 740px;
+      overflow-y: scroll;
+    }
   }
 </style>
