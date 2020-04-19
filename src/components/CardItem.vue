@@ -1,12 +1,16 @@
 <template>
-  <div class="card card-item" @click="$emit('check')">
-    <div class="card-overlay"><i class="far fa-check-circle"></i></div>
-    <div class="card-image">
-    </div>
-    <div class="card-content">
-      <div class="media-content">
-        <p>{{ name }}</p>
-        <p><strong>Rp. {{ price }}</strong></p>
+  <div class="item">
+    <div class="card card-item" v-for="item in items" :key="item.id"
+    @click="$emit('select', item)">
+      <div class="card-overlay"><i class="far fa-check-circle"></i></div>
+      <div class="card-image">
+        <img :src="item.image" :alt="item.image">
+      </div>
+      <div class="card-content">
+        <div class="media-content">
+          <p>{{ item.name }}</p>
+          <p><strong>Rp. {{ item.price }}</strong></p>
+        </div>
       </div>
     </div>
   </div>
@@ -15,14 +19,20 @@
 <script>
 export default {
   name: 'HelloWorld',
-  props: [
-    'name',
-    'price',
-  ],
+  computed: {
+    items() {
+      return this.$store.state.products;
+    },
+  },
 };
 </script>
 
 <style scoped lang="scss">
+  .item{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
   .card-overlay{
     width: 100%;
     height: 100%;
@@ -36,14 +46,14 @@ export default {
     display: none;
   }
   .card-item{
-    width: 175px;
-    height: 175px;
+    width: 180px;
+    height: 205px;
     margin: 0.5em;
+    border-radius: 6px;
   }
-  .card-image{
-    background-image: url('../../public/img/jeremy-ricketts-6ZnhM-xBpos-unsplash.png');
-    background-size: cover;
-    height: 125px;
+  .card-image img{
+    height: 150px;
+    width: 180px;
   }
   .card-content{
     padding: 0.2em 1em;

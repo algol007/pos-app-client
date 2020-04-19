@@ -88,7 +88,11 @@ export default {
       },
       url: process.env.VUE_APP_BASE_URL,
       page: null,
+      items: [],
     };
+  },
+  created() {
+    this.items = JSON.parse(localStorage.getItem('items'));
   },
   methods: {
     upload() {
@@ -108,12 +112,18 @@ export default {
       formData.append('image', this.product.image);
       formData.append('categoryId', this.product.categoryId);
       axios
-        .post(this.url + this.page, formData)
-        .then((data) => {
-          console.log(data);
+        .post(this.url + this.page, formData,
+          { headers: { 'baca-bismillah': this.items.token } })
+        .then(() => {
+          // console.log(data);
           this.$store.dispatch('getAllItems');
+          this.$swal.fire({
+            icon: 'success',
+            html: 'Menu has been created!',
+            showConfirmButton: false,
+            timer: 3000,
+          });
           this.cancel();
-          this.router.push('/');
         })
         .catch((error) => {
           console.log(error);
