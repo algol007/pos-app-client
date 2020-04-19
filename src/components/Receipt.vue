@@ -14,9 +14,9 @@
           </div>
         </div>
         <hr>
-        <ul class="receipt-detail" v-for="order in orderItem" :key="order.id">
-          <li>{{ order.name }}</li>
-          <li>Rp. {{ order.price }}</li>
+        <ul class="receipt-detail" v-for="order in orderItem" :key="order.data.id">
+          <li>{{ order.data.name }}</li>
+          <li>Rp. {{ order.data.price }}</li>
         </ul>
         <ul class="receipt-detail receipt-total">
           <li>Total</li>
@@ -59,22 +59,30 @@ export default {
       doc.autoPrint({ variant: 'non-conform' });
       doc.save('autoprint.pdf');
 
+      this.$store.dispatch('cancelOrder');
       const receipt = document.querySelector('.modal-receipt');
       receipt.classList.toggle('is-active');
     },
     sendEmail() {
+      this.$swal.fire({
+        icon: 'success',
+        html: 'Email has been sent!',
+        showConfirmButton: false,
+        timer: 3000,
+      });
+      this.$store.dispatch('cancelOrder');
       const receipt = document.querySelector('.modal-receipt');
       receipt.classList.toggle('is-active');
     },
     totalPrice() {
       this.orders = this.orderItem;
-      // console.log(this.orders);
-      const total = [];
-      for (let i = 0; i < this.orders.length; i += 1) {
-        total.push(this.orders[i].price);
+      if (this.orders.length !== 0) {
+        const total = [];
+        for (let i = 0; i < this.orders.length; i += 1) {
+          total.push(this.orders[i].data.price);
+        }
+        this.total = total.reduce((a, b) => a + b);
       }
-      // console.log(total);
-      this.total = total.reduce((a, b) => a + b);
     },
   },
   updated() {
