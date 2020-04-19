@@ -5,22 +5,28 @@
     <div class="add-menu" @click="$emit('add')">
       <i class="fas fa-plus"></i>
     </div>
-    <router-link to="/auth/login">
-      <div class="sign-out">
-        <i class="fas fa-sign-out-alt"></i>
-      </div>
-    </router-link>
+    <div class="sign-out" @click="signOut">
+      <i class="fas fa-sign-out-alt"></i>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: 'Sidebar',
+  methods: {
+    signOut() {
+      localStorage.removeItem('items');
+      this.$router.push('auth/login');
+    },
+  },
 };
 </script>
 
 <style scoped lang="scss">
   .menu-panel{
+    z-index: 2;
+    color: #ffffff;
     width: 60px;
     height: 100vh;
     position: fixed;

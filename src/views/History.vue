@@ -1,13 +1,8 @@
 <template>
   <div class="home">
+    <Navbar2 title="History"/>
     <div class="columns is-gapless">
-      <div class="column menu-panel">
-        <router-link to="/"><div class="all-menu"></div></router-link>
-        <router-link to="/history"><div class="income-history"></div></router-link>
-        <div class="add-menu" @click="addItem">
-          <i class="fas fa-plus"></i>
-        </div>
-      </div>
+      <Sidebar />
       <div class="column menu-lists">
         <div class="display-menu">
           <div class="card-info">
@@ -172,9 +167,15 @@
 </template>
 
 <script>
+import Sidebar from '../components/Sidebar.vue';
+import Navbar2 from '../components/Navbar2.vue';
 
 export default {
   name: 'Home',
+  components: {
+    Sidebar,
+    Navbar2,
+  },
   methods: {
     receipt() {
       const receipt = document.querySelector('.modal-receipt');

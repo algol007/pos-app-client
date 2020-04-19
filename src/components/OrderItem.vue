@@ -1,17 +1,21 @@
 <template>
-  <div class="column card-order">
-    <div class="image-order"></div>
-    <div class="desc-order">
-      <div class="name-order">
-        <b>Espresso</b>
+  <div class="order-item">
+    <div class="column card-order" v-for="order in orderItem" :key="order.id">
+      <div class="image-order">
+        <img :src="order.image" :alt="order.image">
       </div>
-      <div class="qty-order">
-        <ul>
-          <li @click="$emit('minus')">-</li>
-          <li>{{ qty }}</li>
-          <li @click="$emit('plus')">+</li>
-        </ul>
-        <p>{{ total }}</p>
+      <div class="desc-order">
+        <div class="name-order">
+          <b>{{ order.name }}</b>
+        </div>
+        <div class="qty-order">
+          <ul>
+            <li @click="$emit('minus', order.id)">-</li>
+            <li>{{ qty }}</li>
+            <li @click="$emit(order.id)">+</li>
+          </ul>
+          <p>Rp. {{ qty * order.price }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -20,10 +24,28 @@
 <script>
 export default {
   name: 'OrderItem',
-  props: [
-    'qty',
-    'total',
-  ],
+  data() {
+    return {
+      qty: 1,
+      count: 0,
+      orders: [],
+    };
+  },
+  methods: {
+    addQty(id) {
+      this.qty += 1;
+      // console.log(id);
+      this.$store.dispatch('addQty', id, this.qty);
+    },
+    reduceQty() {
+      this.qty -= 1;
+    },
+  },
+  computed: {
+    orderItem() {
+      return this.$store.state.selected;
+    },
+  },
 };
 </script>
 
@@ -41,12 +63,14 @@ export default {
     padding: 0 !important;
     align-items: center;
   }
-  .image-order{
+  .image-order img{
     width: 100px;
     height: 70px;
-    background-image: url('../../public/img/jeremy-ricketts-6ZnhM-xBpos-unsplash.png');
-    background-size: cover;
-    background-position: center center;
+    // background-image: url('../../public/img/jeremy-ricketts-6ZnhM-xBpos-unsplash.png');
+    // background-size: cover;
+    // background-position: center center;
+  }
+  .image-order{
     margin-right: 10px;
   }
   .desc-order{
@@ -73,5 +97,6 @@ export default {
     height: 35px;
     border: 1px solid #eaeaea;
     font-weight: bold;
+    cursor: pointer;
   }
 </style>

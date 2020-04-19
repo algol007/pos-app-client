@@ -3,7 +3,7 @@
   <div class="modal modal-receipt">
     <div class="modal-background"></div>
     <div class="modal-card">
-      <section class="modal-card-body">
+      <section class="modal-card-body" ref="print">
         <div class="receipt-head">
           <div class="modal-checkout">
             <p class="checkout-title">Checkout</p>
@@ -14,50 +14,87 @@
           </div>
         </div>
         <hr>
-        <ul class="receipt-detail">
-          <li>Coffee Latte 1x</li>
-          <li>Rp. 15.000</li>
-        </ul>
-        <ul class="receipt-detail">
-          <li>Coffee Latte 1x</li>
-          <li>Rp. 15.000</li>
-        </ul>
-        <ul class="receipt-detail">
-          <li>Coffee Latte 1x</li>
-          <li>Rp. 15.000</li>
+        <ul class="receipt-detail" v-for="order in orderItem" :key="order.id">
+          <li>{{ order.name }}</li>
+          <li>Rp. {{ order.price }}</li>
         </ul>
         <ul class="receipt-detail receipt-total">
           <li>Total</li>
-          <li>Rp. 150.000</li>
+          <li>Rp. {{ total }}</li>
         </ul>
         <ul class="receipt-detail receipt-payment">
           <li>Payment :</li>
           <li>Cash</li>
         </ul>
-        <div class="button-receipt">
-          <button class="button is-medium is-fullwidth bg-pink" @click="receipt">Print</button>
-          <p>Or</p>
-          <button class="button is-medium is-fullwidth bg-blue">
-            Send Email</button>
-        </div>
       </section>
+      <div class="button-receipt">
+        <button class="button is-medium is-fullwidth bg-pink" @click="print">Print</button>
+        <p>Or</p>
+        <button class="button is-medium is-fullwidth bg-blue" @click="sendEmail">
+          Send Email</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import jspdf from 'jspdf';
+
 export default {
   name: 'Receipt',
+  data() {
+    return {
+      total: 0,
+    };
+  },
   methods: {
-    receipt() {
+    print() {
+      const doc = new jspdf(); // eslint-disable-line
+      const html = this.$refs.print.innerHTML;
+
+      doc.fromHTML(html, 15, 15, {
+        width: 150,
+      });
+
+      doc.autoPrint({ variant: 'non-conform' });
+      doc.save('autoprint.pdf');
+
       const receipt = document.querySelector('.modal-receipt');
       receipt.classList.toggle('is-active');
+    },
+    sendEmail() {
+      const receipt = document.querySelector('.modal-receipt');
+      receipt.classList.toggle('is-active');
+    },
+    totalPrice() {
+      this.orders = this.orderItem;
+      // console.log(this.orders);
+      const total = [];
+      for (let i = 0; i < this.orders.length; i += 1) {
+        total.push(this.orders[i].price);
+      }
+      // console.log(total);
+      this.total = total.reduce((a, b) => a + b);
+    },
+  },
+  updated() {
+    this.totalPrice();
+  },
+  computed: {
+    orderItem() {
+      return this.$store.state.selected;
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
+  .modal-card{
+    background-color: #ffffff;
+  }
+  .modal-card-body{
+    padding-bottom: 0;
+  }
   .receipt-detail{
     display: flex;
     justify-content: space-between;
