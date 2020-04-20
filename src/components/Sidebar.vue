@@ -1,8 +1,9 @@
 <template>
   <div class="column menu-panel">
     <router-link to="/"><div class="all-menu"></div></router-link>
-    <router-link to="/history"><div class="income-history"></div></router-link>
-    <div class="add-menu" @click="$emit('add')">
+    <router-link to="/history" v-if="this.role == 'admin'">
+    <div class="income-history"></div></router-link>
+    <div class="add-menu" @click="$emit('add')" v-if="this.role == 'admin'">
       <i class="fas fa-plus"></i>
     </div>
     <div class="sign-out" @click="signOut">
@@ -14,10 +15,25 @@
 <script>
 export default {
   name: 'Sidebar',
+  data() {
+    return {
+      role: 'user',
+      items: [],
+    };
+  },
+  created() {
+    this.items = JSON.parse(localStorage.getItem('items'));
+    this.role = this.items.role;
+  },
   methods: {
     signOut() {
       localStorage.removeItem('items');
       this.$router.push('auth/login');
+    },
+  },
+  computed: {
+    getUser() {
+      return this.$store.state.user;
     },
   },
 };

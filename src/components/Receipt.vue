@@ -65,10 +65,15 @@ export default {
     },
     sendEmail() {
       this.$swal.fire({
-        icon: 'success',
-        html: 'Email has been sent!',
-        showConfirmButton: false,
-        timer: 3000,
+        title: 'Are you sure to send email?',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Send Email',
+      }).then((result) => {
+        if (result.value) {
+          this.$router.push('/sendemail');
+        }
       });
       this.$store.dispatch('cancelOrder');
       const receipt = document.querySelector('.modal-receipt');

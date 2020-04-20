@@ -44,9 +44,6 @@ export default {
       // selected: null,
     };
   },
-  created() {
-
-  },
   methods: {
     reduceQty() {
       this.qty -= 1;
@@ -59,6 +56,8 @@ export default {
       receipt.classList.toggle('is-active');
     },
     select(data) {
+      // const select = document.querySelector('.card-overlay');
+      // select.classList.toggle('show');
       return this.$store.dispatch('addOrder', { data, qty: 1 });
     },
     cancelOrder() {
@@ -83,7 +82,8 @@ export default {
   .display-menu{
     padding: 1em;
     padding-top: 76px;
-    min-height: 100vh;
+    height: 100vh;
+    overflow-y: scroll;
   }
   @media screen and (max-width: 768px){
     .modal-item{

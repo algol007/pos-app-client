@@ -1,13 +1,22 @@
 <template>
   <div class="login">
     <div class="title">
-      <h1>Login Page</h1>
+      <h1>Send Receipt to Email</h1>
     </div>
     <div class="column is-6 is-login">
-      <form @submit="login" class="card card-auth">
+      <form @submit="sendEmail" class="card card-auth">
         <div class="field">
           <p class="control has-icons-left has-icons-right">
-            <input class="input" type="email" placeholder="Email" v-model="user.email"
+            <input class="input" type="text" placeholder="Costumer Name" v-model="costumer.name"
+            required>
+            <span class="icon is-small is-left">
+              <i class="fas fa-user"></i>
+            </span>
+          </p>
+        </div>
+        <div class="field">
+          <p class="control has-icons-left has-icons-right">
+            <input class="input" type="email" placeholder="Costumer Email" v-model="costumer.email"
             required>
             <span class="icon is-small is-left">
               <i class="fas fa-envelope"></i>
@@ -16,19 +25,19 @@
         </div>
         <div class="field">
           <p class="control has-icons-left">
-            <input class="input" type="password" placeholder="Password" v-model="user.password"
+            <input class="input" type="file" ref="file"
             required>
             <span class="icon is-small is-left">
-              <i class="fas fa-lock"></i>
+              <i class="fas fa-file"></i>
             </span>
           </p>
         </div>
         <div class="field">
           <p class="control">
             <button class="button is-success">
-              Login
+              Send Email
             </button>
-            <router-link to="/auth/register"><u>Not have account? Register</u></router-link>
+            <router-link to="/"><u>Back to Menu</u></router-link>
           </p>
         </div>
       </form>
@@ -46,64 +55,30 @@ export default {
     return {
       url: process.env.VUE_APP_BASE_URL,
       page: null,
-      user: {
+      costumer: {
         email: null,
         password: null,
       },
-      local: {
-        id: null,
-        token: null,
-      },
+      items: [],
     };
   },
   created() {
-    // eslint-disable-next-line
-    const token = this.$route.query.token;
-    // console.log(token);
-    if (token) {
-      this.local.token = token;
-      this.userActivation();
-    }
+    this.items = JSON.parse(localStorage.getItem('items'));
   },
   methods: {
-    localData() {
-      const parsed = JSON.stringify({
-        isLogin: true,
-        id: this.local.id,
-        token: this.local.token,
-        role: this.local.role,
-      });
-      localStorage.setItem('items', parsed);
-    },
-    userActivation() {
-      this.page = 'user/activation?token=';
-      axios.patch(this.url + this.page + this.local.token, {
-        status: 1,
-      })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    login(event) {
+    sendEmail(event) {
       event.preventDefault();
-      this.page = 'auth/signin';
+      this.page = 'costumer';
       axios
         .post(this.url + this.page, {
-          email: this.user.email,
-          password: this.user.password,
-        })
-        .then((res) => {
-          // console.log(res.data);
-          this.local.id = res.data.user;
-          this.local.token = res.data.token;
-          this.local.role = res.data.role;
-          this.localData();
+          name: this.costumer.name,
+          email: this.costumer.email,
+        },
+        { headers: { 'baca-bismillah': this.items.token } })
+        .then(() => {
           this.$swal.fire({
             icon: 'success',
-            html: 'Login Successfully!',
+            html: 'Email has been sent!',
             showConfirmButton: false,
             timer: 3000,
           });

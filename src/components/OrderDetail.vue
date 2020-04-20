@@ -60,12 +60,7 @@ export default {
       count: 0,
       orders: [],
       total: 0,
-      items: null,
     };
-  },
-  created() {
-    this.items = JSON.parse(localStorage.getItem('items'));
-    // console.log(this.items);
   },
   methods: {
     addQty(data) { // eslint-disable-line
@@ -133,6 +128,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  .menu-order{
+    height: 100vh;
+    overflow-y: scroll;
+  }
   .ordered, .no-order{
     padding-top: 60px;
   }
@@ -238,6 +237,9 @@ export default {
       padding: 20px 20px 20px 80px;
       max-height: 530px;
       overflow-y: scroll;
+    }
+    .no-order{
+      padding: 60px 0;
     }
   }
 </style>
