@@ -4,6 +4,7 @@ import Home from '../views/Home.vue';
 import History from '../views/History.vue';
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
+import SendEmail from '../views/SendEmail.vue';
 
 Vue.use(VueRouter);
 
@@ -27,6 +28,11 @@ const routes = [
     path: '/auth/register',
     name: 'Register',
     component: Register,
+  },
+  {
+    path: '/sendemail',
+    name: 'SendEmail',
+    component: SendEmail,
   },
 ];
 

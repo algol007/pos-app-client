@@ -12,6 +12,7 @@ export default new Vuex.Store({
     products: null,
     selected: [],
     orders: null,
+    user: null,
   },
   mutations: {
     product(state, data) {
@@ -22,6 +23,9 @@ export default new Vuex.Store({
     },
     cancel(state) {
       state.selected = [];
+    },
+    user(state, data) {
+      state.user = data;
     },
     add(state, data) {
       const items = state.selected.find((item) => item.data.id === data.data.id);
@@ -80,6 +84,16 @@ export default new Vuex.Store({
         .get(context.state.url + 'order') //eslint-disable-line
         .then((res) => {
           context.commit('order', res.data.orders.rows);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getUserById(context, data) {
+      axios
+        .get(context.state.url + 'user/' + data) //eslint-disable-line
+        .then((res) => {
+          context.commit('user', res.data.user);
         })
         .catch((error) => {
           console.log(error);
