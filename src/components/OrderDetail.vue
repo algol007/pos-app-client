@@ -49,7 +49,7 @@
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 // import OrderItem from './OrderItem.vue';
 
 export default {
@@ -60,7 +60,12 @@ export default {
       count: 0,
       orders: [],
       total: 0,
+      items: [],
     };
+  },
+  created() {
+    this.items = JSON.parse(localStorage.getItem('items'));
+    // this.role = this.items.role;
   },
   methods: {
     addQty(data) { // eslint-disable-line
@@ -81,34 +86,34 @@ export default {
       }
     },
     receipt() {
-      // const order = 'order';
-      // const date = new Date();
-      // axios
-      //   .post(this.$store.state.url + order, {
-      //     userId: this.qty,
-      //     total: this.total,
-      //     invoice: '#POS' + date.getTime(), // eslint-disable-line
-      //   },
-      //   { headers: { 'baca-bismillah': this.items.token } })
-      //   .then((res) => {
-      //     console.log(res);
-      //   }).catch((err) => {
-      //     console.log(err);
-      //   });
-      // for (let i = 0; i < this.orderItem.length; i += 1) {
-      //   setTimeout((detail = 'orderDetail') => {
-      //     axios
-      //       .post(this.$store.state.url + detail, {
-      //         productId: this.orders[i].data.id,
-      //         qty: this.orders[i].qty,
-      //         price: this.orders[i].data.price,
-      //       },
-      //       { headers: { 'baca-bismillah': this.items.token } })
-      //       .then((res) => {
-      //         console.log(res);
-      //       });
-      //   }, 1000);
-      // }
+      const order = 'order';
+      const date = new Date();
+      axios
+        .post(this.$store.state.url + order, {
+          userId: this.qty,
+          total: this.total,
+          invoice: '#POS' + date.getTime(), // eslint-disable-line
+        },
+        { headers: { 'baca-bismillah': this.items.token } })
+        .then((res) => {
+          console.log(res);
+        }).catch((err) => {
+          console.log(err);
+        });
+      for (let i = 0; i < this.orderItem.length; i += 1) {
+        setTimeout((detail = 'orderDetail') => {
+          axios
+            .post(this.$store.state.url + detail, {
+              productId: this.orders[i].data.id,
+              qty: this.orders[i].qty,
+              price: this.orders[i].data.price,
+            },
+            { headers: { 'baca-bismillah': this.items.token } })
+            .then((res) => {
+              console.log(res);
+            });
+        }, 1000);
+      }
       const receipt = document.querySelector('.modal-receipt');
       receipt.classList.toggle('is-active');
     },

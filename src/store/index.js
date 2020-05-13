@@ -33,13 +33,13 @@ export default new Vuex.Store({
         state.selected.push(data);
       }
     },
-    addQty(state, data) { // eslint-disable-line 
+    addQty(state, data) { // eslint-disable-line
       const items = state.selected.find((item) => item.data.id === data.data.id);
       if (items) {
         items.qty += 1;
       }
     },
-    reduceQty(state, data) { // eslint-disable-line 
+    reduceQty(state, data) { // eslint-disable-line
       const items = state.selected.find((item) => item.data.id === data.data.id);
       if (items) {
         items.qty -= 1;
