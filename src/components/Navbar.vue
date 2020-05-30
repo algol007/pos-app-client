@@ -17,13 +17,15 @@
       </div>
     </div>
     <div class="column is-4 order">
-      Cart <sup class="cart-total">{{ orderItem.length }}</sup>
+      Cart <sup class="cart-total">{{ orders.length }}</sup>
     </div>
   </div>
 
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
+
 export default {
   name: 'Navbar',
   data() {
@@ -36,6 +38,7 @@ export default {
     this.cart();
   },
   methods: {
+    ...mapActions('product', ['getAllProducts']),
     cart() {
       this.total = this.$store.state.selected.length;
       console.log(this.total);
@@ -51,13 +54,12 @@ export default {
       input.classList.toggle('show');
     },
     searchMenu() {
-      this.$store.dispatch('searchItem', this.search);
+      console.log(this.search);
+      this.getAllProducts({ page: 1, data: `&search=${this.search}` });
     },
   },
   computed: {
-    orderItem() {
-      return this.$store.state.selected;
-    },
+    ...mapState('order', ['orders']),
   },
 };
 </script>

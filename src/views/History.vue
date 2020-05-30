@@ -1,8 +1,8 @@
 <template>
   <div class="home">
-    <Navbar2 title="History"/>
+    <Navbar2 title="History" />
     <div class="columns is-gapless">
-      <Sidebar />
+      <Sidebar @addItem="addItem" />
       <div class="column menu-lists">
         <div class="display-menu">
           <div class="card-info">
@@ -25,7 +25,7 @@
                     Orders
                   </div>
                   <div class="today-income">
-                    {{ totalOrders }}
+                    {{ histories.length }}
                   </div>
                 </div>
               </div>
@@ -37,7 +37,7 @@
                     This Year's Income
                   </div>
                   <div class="today-income">
-                    Rp. {{ incomes }}
+                    Rp. {{ revenues }}
                   </div>
                 </div>
               </div>
@@ -72,7 +72,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="order in orders" :key="order.id">
+                      <tr v-for="order in history" :key="order.id">
                         <td>{{ order.invoice }}</td>
                         <td>{{ order.userOrder.name }}</td>
                         <td>{{ order.createdAt.slice(0, 10) }}</td>
@@ -91,14 +91,15 @@
 </template>
 
 <script>
-import Sidebar from '../components/Sidebar.vue';
+import { mapState, mapActions } from 'vuex';
 import Navbar2 from '../components/Navbar2.vue';
+import Sidebar from '../components/Sidebar.vue';
 
 export default {
   name: 'Home',
   components: {
-    Sidebar,
     Navbar2,
+    Sidebar,
   },
   data() {
     return {
@@ -111,12 +112,12 @@ export default {
         '2020-04-17': 8,
         '2020-04-18': 7,
       },
-      incomes: null,
-      totalOrders: null,
-      revenue: null,
+      incomes: 0,
+      revenues: 0,
     };
   },
   methods: {
+    ...mapActions('order', ['getAllHistories']),
     receipt() {
       const receipt = document.querySelector('.modal-receipt');
       receipt.classList.toggle('is-active');
@@ -130,50 +131,55 @@ export default {
     },
     income() {
       const income = [];
-      for (let i = 0; i < this.orders.length; i += 1) {
-        income.push(this.orders[i].total);
+      for (let i = 0; i < this.history.length; i += 1) {
+        income.push(this.history[i].total);
       }
       this.incomes = income.reduce((a, b) => a + b);
     },
-    revenues() {
+    revenue() {
       const revenue = [];
-      for (let i = 0; i < this.orders.length; i += 1) {
-        revenue.push(this.orders[0].total);
+      for (let i = 0; i < this.histories.length; i += 1) {
+        revenue.push(this.histories[i].total);
       }
-      this.revenue = revenue;
+      this.revenues = revenue.reduce((a, b) => a + b);
     },
-  },
-  updated() {
-    this.totalOrder();
-    this.income();
-    this.revenues();
   },
   mounted() {
-    this.$store.dispatch('getAllOrders');
+    if (this.local.length === 0) {
+      this.$router.push('/auth/login');
+    }
+    this.getAllHistories();
+  },
+  updated() {
+    this.income();
+    this.revenue();
   },
   computed: {
-    orders() {
-      return this.$store.state.orders;
-    },
+    ...mapState('user', ['local']),
+    ...mapState('order', ['history', 'histories']),
   },
 };
 </script>
 
 <style lang="scss" scoped>
+  .columns.is-gapless:not(:last-child) {
+    margin-bottom: 0;
+  }
+  .menu-lists{
+    margin-left: 60px !important;
+    background: rgba(190, 195, 202, 0.3);
+  }
+  .display-menu{
+    padding: 76px 1em 1em;
+    height: 100vh;
+    overflow-y: scroll;
+  }
   .show{
     transition: 1s;
     display: block !important;
   }
   .columns.is-gapless:not(:last-child) {
     margin-bottom: 0;
-  }
-  .display-menu{
-    padding: 76px 16px 16px 76px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-content: flex-start;
-    min-height: 100vh;
   }
   .modal-item-button{
     display: flex;

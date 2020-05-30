@@ -2,13 +2,13 @@
   <div class="home">
     <Navbar />
     <div class="columns is-gapless">
-      <Sidebar @add="addItem" />
+      <Sidebar @addItem="addItem" />
       <div class="column menu-lists">
         <div class="display-menu">
           <CardItem @select="select" />
         </div>
       </div>
-      <OrderDetail @cancelOrder="cancelOrder" />
+      <OrderDetail/>
     </div>
     <AddItem />
     <Receipt />
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-// import { mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import Navbar from '../components/Navbar.vue';
 import Sidebar from '../components/Sidebar.vue';
 import CardItem from '../components/CardItem.vue';
@@ -34,39 +34,23 @@ export default {
     Receipt,
     OrderDetail,
   },
-  data() {
-    return {
-      page: null,
-      url: process.env.VUE_APP_BASE_URL,
-      qty: 1,
-      total: 10000,
-      image: null,
-      // selected: null,
-    };
-  },
   methods: {
-    reduceQty() {
-      this.qty -= 1;
-    },
-    addQty() {
-      this.qty += 1;
-    },
+    ...mapActions('order', ['addOrders']),
     addItem() {
-      const receipt = document.querySelector('.modal-item');
-      receipt.classList.toggle('is-active');
+      const add = document.querySelector('.modal-item');
+      add.classList.toggle('is-active');
     },
     select(data) {
-      // const select = document.querySelector('.card-overlay');
-      // select.classList.toggle('show');
-      return this.$store.dispatch('addOrder', { data, qty: 1 });
-    },
-    cancelOrder() {
-      this.$store.dispatch('cancelOrder');
+      this.addOrders({ data, qty: 1 });
     },
   },
   mounted() {
-    this.$store.dispatch('getAllItems');
-    // console.log(this.orderItem);
+    if (this.local.length === 0) {
+      this.$router.push('/auth/login');
+    }
+  },
+  computed: {
+    ...mapState('user', ['local']),
   },
 };
 </script>
@@ -80,8 +64,7 @@ export default {
     background: rgba(190, 195, 202, 0.3);
   }
   .display-menu{
-    padding: 1em;
-    padding-top: 76px;
+    padding: 76px 1em 1em;
     height: 100vh;
     overflow-y: scroll;
   }

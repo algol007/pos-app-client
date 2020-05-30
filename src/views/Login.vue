@@ -7,7 +7,7 @@
       <form @submit="login" class="card card-auth">
         <div class="field">
           <p class="control has-icons-left has-icons-right">
-            <input class="input" type="email" placeholder="Email" v-model="user.email"
+            <input class="input" type="email" placeholder="Email" v-model="email"
             required>
             <span class="icon is-small is-left">
               <i class="fas fa-envelope"></i>
@@ -16,7 +16,7 @@
         </div>
         <div class="field">
           <p class="control has-icons-left">
-            <input class="input" type="password" placeholder="Password" v-model="user.password"
+            <input class="input" type="password" placeholder="Password" v-model="password"
             required>
             <span class="icon is-small is-left">
               <i class="fas fa-lock"></i>
@@ -44,21 +44,12 @@ export default {
   name: 'Login',
   data() {
     return {
-      url: process.env.VUE_APP_BASE_URL,
-      page: null,
-      user: {
-        email: null,
-        password: null,
-      },
-      local: {
-        id: null,
-        token: null,
-      },
+      email: null,
+      password: null,
     };
   },
   created() {
-    // eslint-disable-next-line
-    const token = this.$route.query.token;
+    const token = this.$route.query.token; // eslint-disable-line
     // console.log(token);
     if (token) {
       this.local.token = token;
@@ -66,15 +57,6 @@ export default {
     }
   },
   methods: {
-    localData() {
-      const parsed = JSON.stringify({
-        isLogin: true,
-        id: this.local.id,
-        token: this.local.token,
-        role: this.local.role,
-      });
-      localStorage.setItem('items', parsed);
-    },
     userActivation() {
       this.page = 'user/activation?token=';
       axios.patch(this.url + this.page + this.local.token, {
@@ -82,25 +64,18 @@ export default {
       })
         .then((res) => {
           console.log(res);
-        })
-        .catch((error) => {
-          console.log(error);
         });
     },
-    login(event) {
-      event.preventDefault();
-      this.page = 'auth/signin';
+    login(e) {
+      e.preventDefault();
       axios
-        .post(this.url + this.page, {
-          email: this.user.email,
-          password: this.user.password,
+        .post(process.env.VUE_APP_BASE_URL + 'auth/signin', {  // eslint-disable-line
+          email: this.email,
+          password: this.password,
         })
         .then((res) => {
+          localStorage.setItem('items', JSON.stringify(res.data));
           // console.log(res.data);
-          this.local.id = res.data.user;
-          this.local.token = res.data.token;
-          this.local.role = res.data.role;
-          this.localData();
           this.$swal.fire({
             icon: 'success',
             html: 'Login Successfully!',
@@ -108,9 +83,6 @@ export default {
             timer: 3000,
           });
           this.$router.push('/');
-        })
-        .catch((error) => {
-          console.log(error);
         });
     },
   },

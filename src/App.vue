@@ -15,8 +15,8 @@
     margin: 0;
     padding: 0;
   }
-  html {
-    scroll-behavior: smooth;
+  html{
+    overflow-y: hidden;
   }
   body {
     font-family: Airbnb;

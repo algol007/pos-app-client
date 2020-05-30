@@ -75,6 +75,7 @@
 
 <script>
 import axios from 'axios';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: 'AddItem',
@@ -86,15 +87,10 @@ export default {
         image: null,
         categoryId: null,
       },
-      url: process.env.VUE_APP_BASE_URL,
-      page: null,
-      items: [],
     };
   },
-  created() {
-    this.items = JSON.parse(localStorage.getItem('items'));
-  },
   methods: {
+    ...mapActions('product', ['getAllProducts']),
     upload() {
       const file = this.$refs.file.files[0];
       this.product.image = file;
@@ -103,20 +99,18 @@ export default {
       const receipt = document.querySelector('.modal-item');
       receipt.classList.toggle('is-active');
     },
-    addItem(event) {
-      event.preventDefault();
-      this.page = 'admin/product';
+    addItem(e) {
+      e.preventDefault();
       const formData = new FormData();
       formData.append('name', this.product.name);
       formData.append('price', this.product.price);
       formData.append('image', this.product.image);
       formData.append('categoryId', this.product.categoryId);
       axios
-        .post(this.url + this.page, formData,
-          { headers: { 'baca-bismillah': this.items.token } })
+        .post(process.env.VUE_APP_BASE_URL + 'admin/product', formData, // eslint-disable-line
+          { headers: { 'baca-bismillah': this.local.token } })
         .then(() => {
-          // console.log(data);
-          this.$store.dispatch('getAllItems');
+          this.getAllProducts();
           this.$swal.fire({
             icon: 'success',
             html: 'Menu has been created!',
@@ -124,11 +118,11 @@ export default {
             timer: 3000,
           });
           this.cancel();
-        })
-        .catch((error) => {
-          console.log(error);
         });
     },
+  },
+  computed: {
+    ...mapState('user', ['local']),
   },
 };
 </script>

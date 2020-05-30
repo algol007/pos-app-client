@@ -4,18 +4,20 @@
     <div class="modal-background"></div>
     <div class="modal-card">
       <section class="modal-card-body" ref="print">
+        <strong class="close" @click="close">x</strong>
+        <br>
         <div class="receipt-head">
           <div class="modal-checkout">
             <p class="checkout-title">Checkout</p>
-            <p>Cashier : Pevita Pearce</p>
+            <p>Cashier : {{ user.name }}</p>
           </div>
           <div class="receipt-number">
             <p>Receipt no: #010410919</p>
           </div>
         </div>
         <hr>
-        <ul class="receipt-detail" v-for="order in orderItem" :key="order.data.id">
-          <li>{{ order.data.name }}</li>
+        <ul class="receipt-detail" v-for="order in orders" :key="order.data.id">
+          <li>{{ order.qty }} x {{ order.data.name }}</li>
           <li>Rp. {{ order.data.price }}</li>
         </ul>
         <ul class="receipt-detail receipt-total">
@@ -38,7 +40,8 @@
 </template>
 
 <script>
-import jspdf from 'jspdf';
+// import jspdf from 'jspdf';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: 'Receipt',
@@ -48,6 +51,11 @@ export default {
     };
   },
   methods: {
+    ...mapActions('order', ['cancelOrder']),
+    close() {
+      const receipt = document.querySelector('.modal-receipt');
+      receipt.classList.toggle('is-active');
+    },
     print() {
       const doc = new jspdf(); // eslint-disable-line
       const html = this.$refs.print.innerHTML;
@@ -59,7 +67,7 @@ export default {
       doc.autoPrint({ variant: 'non-conform' });
       doc.save('autoprint.pdf');
 
-      this.$store.dispatch('cancelOrder');
+      this.cancelOrder();
       const receipt = document.querySelector('.modal-receipt');
       receipt.classList.toggle('is-active');
     },
@@ -75,18 +83,20 @@ export default {
           this.$router.push('/sendemail');
         }
       });
-      this.$store.dispatch('cancelOrder');
+
+      this.cancelOrder();
       const receipt = document.querySelector('.modal-receipt');
       receipt.classList.toggle('is-active');
     },
     totalPrice() {
-      this.orders = this.orderItem;
       if (this.orders.length !== 0) {
         const total = [];
         for (let i = 0; i < this.orders.length; i += 1) {
-          total.push(this.orders[i].data.price);
+          total.push(this.orders[i].data.price * this.orders[i].qty);
         }
         this.total = total.reduce((a, b) => a + b);
+      } else {
+        this.total = 0;
       }
     },
   },
@@ -94,9 +104,8 @@ export default {
     this.totalPrice();
   },
   computed: {
-    orderItem() {
-      return this.$store.state.selected;
-    },
+    ...mapState('user', ['user']),
+    ...mapState('order', ['orders']),
   },
 };
 </script>
@@ -107,6 +116,17 @@ export default {
   }
   .modal-card-body{
     padding-bottom: 0;
+  }
+  .close{
+    text-align: center;
+    border: 1px solid #111111;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    float: right;
+    display: block;
+    cursor: pointer;
+    font-size: 18px;
   }
   .receipt-detail{
     display: flex;
