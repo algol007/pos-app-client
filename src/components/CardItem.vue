@@ -1,6 +1,6 @@
 <template>
   <div class="item">
-    <div class="card card-item" v-for="item in items" :key="item.id"
+    <div class="card card-item" v-for="item in products" :key="item.id"
     @click="$emit('select', item)">
       <div class="card-overlay"><i class="far fa-check-circle"></i></div>
       <div class="card-image">
@@ -13,16 +13,47 @@
         </div>
       </div>
     </div>
+    <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+      <div class="pagination-previous" @click="prev">Previous</div>
+      <div class="pagination-next" @click="next">Next page</div>
+    </nav>
   </div>
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex';
+
 export default {
   name: 'HelloWorld',
-  computed: {
-    items() {
-      return this.$store.state.products;
+  data() {
+    return {
+      page: 1,
+    };
+  },
+  methods: {
+    ...mapActions('product', ['getAllProducts']),
+    next() {
+      if (this.page < this.totalPage) {
+        this.page += 1;
+      } else {
+        this.page = this.totalPage;
+      }
+      this.getAllProducts({ page: this.page, data: '' });
     },
+    prev() {
+      if (this.page > 2) {
+        this.page -= 1;
+      } else {
+        this.page = 1;
+      }
+      this.getAllProducts({ page: this.page, data: '' });
+    },
+  },
+  mounted() {
+    this.getAllProducts({ page: this.page, data: '' });
+  },
+  computed: {
+    ...mapState('product', ['products', 'totalPage']),
   },
 };
 </script>
@@ -58,5 +89,10 @@ export default {
   .card-content{
     padding: 0.2em 1em;
     font-size: 0.8em;
+  }
+  .pagination{
+    width: 100%;
+    display: block;
+    margin: 1em;
   }
 </style>

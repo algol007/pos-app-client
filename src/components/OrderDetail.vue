@@ -1,6 +1,6 @@
 <template>
   <div class="column is-4 menu-order">
-    <div class="no-order" v-if="orderItem.length == 0">
+    <div class="no-order" v-if="orders.length == 0">
       <div class="image-no-order">
       </div>
       <div class="text-no-order">
@@ -10,7 +10,7 @@
     </div>
     <div class="ordered" v-else>
       <div class="is-order">
-        <div class="column card-order" v-for="order in orderItem" :key="order.data.id">
+        <div class="column card-order" v-for="order in orders" :key="order.id">
           <div class="image-order">
             <img :src="order.data.image" :alt="order.data.image">
           </div>
@@ -40,7 +40,7 @@
           @click="receipt">
             Checkout</button>
           <button class="button is-fullwidth button-checkout bg-pink"
-          @click="$emit('cancelOrder')">
+          @click="cancel">
             Cancel</button>
         </div>
       </div>
@@ -49,85 +49,49 @@
 </template>
 
 <script>
-import axios from 'axios';
-// import OrderItem from './OrderItem.vue';
+// import axios from 'axios';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: 'OrderDetail',
   data() {
     return {
       qty: 1,
-      count: 0,
-      orders: [],
       total: 0,
-      items: [],
     };
   },
-  created() {
-    this.items = JSON.parse(localStorage.getItem('items'));
-    // this.role = this.items.role;
-  },
   methods: {
-    addQty(data) { // eslint-disable-line
-      this.$store.dispatch('addQty', data);
-      // console.log([data]);
+    ...mapActions('order', ['cancelOrder', 'add', 'reduce']),
+    addQty(data) {
+      this.add(data);
     },
     reduceQty(data) {
-      this.$store.dispatch('reduceQty', data);
+      this.reduce(data);
+    },
+    receipt() {
+      const receipt = document.querySelector('.modal-receipt');
+      receipt.classList.toggle('is-active');
+    },
+    cancel() {
+      this.cancelOrder();
     },
     totalPrice() {
-      this.orders = this.orderItem;
       if (this.orders.length !== 0) {
         const total = [];
         for (let i = 0; i < this.orders.length; i += 1) {
           total.push(this.orders[i].data.price * this.orders[i].qty);
         }
         this.total = total.reduce((a, b) => a + b);
+      } else {
+        this.total = 0;
       }
-    },
-    receipt() {
-      const order = 'order';
-      const date = new Date();
-      axios
-        .post(this.$store.state.url + order, {
-          userId: this.qty,
-          total: this.total,
-          invoice: '#POS' + date.getTime(), // eslint-disable-line
-        },
-        { headers: { 'baca-bismillah': this.items.token } })
-        .then((res) => {
-          console.log(res);
-        }).catch((err) => {
-          console.log(err);
-        });
-      for (let i = 0; i < this.orderItem.length; i += 1) {
-        setTimeout((detail = 'orderDetail') => {
-          axios
-            .post(this.$store.state.url + detail, {
-              productId: this.orders[i].data.id,
-              qty: this.orders[i].qty,
-              price: this.orders[i].data.price,
-            },
-            { headers: { 'baca-bismillah': this.items.token } })
-            .then((res) => {
-              console.log(res);
-            });
-        }, 1000);
-      }
-      const receipt = document.querySelector('.modal-receipt');
-      receipt.classList.toggle('is-active');
     },
   },
   updated() {
     this.totalPrice();
   },
   computed: {
-    grandTotal() {
-      return this.totalPrice();
-    },
-    orderItem() {
-      return this.$store.state.selected;
-    },
+    ...mapState('order', ['orders']),
   },
 };
 </script>
