@@ -42,7 +42,6 @@
       <image width="430" src='https://github.com/algol007/pos-app-client/blob/master/src/assets/pos/checkout.png' />
 </p>
 
-
 ## Usage for development
 
 1. Open your terminal or command prompt
