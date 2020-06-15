@@ -16,7 +16,7 @@ export default ({
       // console.log(state.products);
     },
     pages(state, data) {
-      state.totalPage = Math.ceil(data / 9);
+      state.totalPage = Math.ceil(data / 12);
       // console.log(state.totalPage);
     },
   },

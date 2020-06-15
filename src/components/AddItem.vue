@@ -110,7 +110,7 @@ export default {
         .post(process.env.VUE_APP_BASE_URL + 'admin/product', formData, // eslint-disable-line
           { headers: { 'baca-bismillah': this.local.token } })
         .then(() => {
-          this.getAllProducts();
+          this.getAllProducts({ page: 1, data: '' });
           this.$swal.fire({
             icon: 'success',
             html: 'Menu has been created!',

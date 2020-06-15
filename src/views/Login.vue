@@ -5,6 +5,12 @@
     </div>
     <div class="column is-6 is-login">
       <form @submit="login" class="card card-auth">
+      <article class="message is-danger" v-if="error.length > 0">
+        <div class="message-header">
+          <p>Wrong Password!</p>
+          <!-- <button class="delete" aria-label="delete"></button> -->
+        </div>
+      </article>
         <div class="field">
           <p class="control has-icons-left has-icons-right">
             <input class="input" type="email" placeholder="Email" v-model="email"
@@ -46,6 +52,7 @@ export default {
     return {
       email: null,
       password: null,
+      error: [],
     };
   },
   created() {
@@ -74,15 +81,19 @@ export default {
           password: this.password,
         })
         .then((res) => {
-          localStorage.setItem('items', JSON.stringify(res.data));
-          // console.log(res.data);
-          this.$swal.fire({
-            icon: 'success',
-            html: 'Login Successfully!',
-            showConfirmButton: false,
-            timer: 3000,
-          });
-          this.$router.push('/');
+          if (res.data.status === 2 || res.data.status === 3) {
+            this.error.push(res.message);
+          } else {
+            localStorage.setItem('items', JSON.stringify(res.data));
+            // console.log(res.data);
+            this.$swal.fire({
+              icon: 'success',
+              html: 'Login Successfully!',
+              showConfirmButton: false,
+              timer: 3000,
+            });
+            this.$router.push('/');
+          }
         });
     },
   },
