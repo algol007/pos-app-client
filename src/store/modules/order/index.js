@@ -60,7 +60,7 @@ export default ({
     },
     getAllHistories(context) {
       axios
-        .get('http://localhost:5000/api/pos/order')
+        .get(process.env.VUE_APP_BASE_URL + 'order') // eslint-disable-line
         .then((res) => {
           context.commit('history', res.data.orders.rows);
         });
