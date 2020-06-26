@@ -40,7 +40,7 @@
 </template>
 
 <script>
-// import jspdf from 'jspdf';
+import jspdf from 'jspdf';
 import { mapState, mapActions } from 'vuex';
 
 export default {

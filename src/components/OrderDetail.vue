@@ -69,8 +69,29 @@ export default {
       this.reduce(data);
     },
     receipt() {
-      const receipt = document.querySelector('.modal-receipt');
-      receipt.classList.toggle('is-active');
+      if (this.user.length === 0) {
+        this.$swal.fire({
+          title: 'Unable action',
+          text: 'You have to login first!',
+          icon: 'error',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, Login',
+          cancelButtonText: 'No, Thank You',
+        }).then((result) => {
+          if (result.value) {
+            this.$router.push('/auth/login');
+          } else if (result.dismiss === this.$swal.DismissReason.cancel) {
+            this.$swal.fire(
+              'Cancelled',
+              'Your file is safe :)',
+              'error',
+            );
+          }
+        });
+      } else {
+        const receipt = document.querySelector('.modal-receipt');
+        receipt.classList.toggle('is-active');
+      }
     },
     cancel() {
       this.cancelOrder();
@@ -92,6 +113,7 @@ export default {
   },
   computed: {
     ...mapState('order', ['orders']),
+    ...mapState('user', ['user']),
   },
 };
 </script>
