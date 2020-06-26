@@ -77,8 +77,8 @@ export default {
     display: none;
   }
   .card-item{
-    width: 180px;
-    height: 205px;
+    width: 220px;
+    height: 245px;
     margin: 0.5em;
     border-radius: 6px;
   }
