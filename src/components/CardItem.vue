@@ -83,8 +83,8 @@ export default {
     border-radius: 6px;
   }
   .card-image img{
-    height: 150px;
-    width: 180px;
+    height: 190px;
+    width: 220px;
   }
   .card-content{
     padding: 0.2em 1em;
